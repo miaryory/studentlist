@@ -1,25 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Hogwarts</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <template>
-      <div class="student">
-        <h1 class="studentName"></h1>
-        <p class="studentHouse"></p>
-      </div>
-    </template>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Hogwarts</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <template>
+    <div class="student">
+      <h1 class="studentName"></h1>
+      <p class="studentHouse"></p>
+    </div>
+  </template>
+
+  <main>
 
     <h1>Welcome to Hogwarts</h1>
 
-    <main></main>
+    <div class="allOpt">
 
-    <script src="script.js"></script>
-  </body>
+      <div class="sortDropDown">
+        <button class="sortBy">Sort by</button>
+        <div class="sortOpt">
+          <p id="sortFirst">First name</p>
+          <p id="sortLast">Last name</p>
+          <p id="sortHouse">House</p>
+          <p id="sortNone">None</p>
+        </div>
+      </div>
+
+      <div class="filterDropDown">
+        <button class="filterBy">Filter</button>
+        <div class="filterOpt">
+          <p id="filterGryff">Gryffindor</p>
+          <p id="filterSlyth">Slytherin</p>
+          <p id="filterHuff">Hufflepuff</p>
+          <p id="filterRav">Ravenclaw</p>
+          <p id="filterAll">All</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="list"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
 </html>

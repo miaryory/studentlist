@@ -1,3 +1,7 @@
+html {
+    height: 100%;
+}
+
 body {
     color: white;
     background-image: url(back.jpg);
@@ -5,9 +9,61 @@ body {
     background-attachment: fixed;
 }
 
-body>h1 {
+main {
+    display: grid;
+    grid-template-areas: "options title"
+        "options list";
+}
+
+main>h1 {
+    grid-area: title;
     text-align: center;
     font-size: 2.5em;
+}
+
+.allOpt {
+    /* background-color: black; */
+    grid-area: options;
+}
+
+.list {
+    grid-area: list;
+}
+
+/* a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+} */
+
+.sortOpt p,
+.filterOpt p {
+    display: block;
+}
+
+.sortOpt,
+.filterOpt {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
+.sortBy,
+.filterBy {
+    width: 10em;
+    height: 2em;
 }
 
 .student>h1 {
@@ -22,13 +78,6 @@ body>h1 {
     padding: 1em;
     text-align: center;
     margin: 2em;
-    width: 20em;
+    width: 90%;
     overflow: hidden;
-}
-
-main {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
 }
