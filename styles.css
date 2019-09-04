@@ -49,12 +49,13 @@ a:visited {
 .sortOpt p,
 .filterOpt p {
     display: block;
+    cursor: pointer;
 }
 
-.sortOpt,
+/* .sortOpt,
 .filterOpt {
     display: none;
-}
+} */
 
 .show {
     display: block;
@@ -66,13 +67,6 @@ a:visited {
     height: 2em;
 }
 
-.student>h1 {
-    font-size: 1.5em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .student {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 1em;
@@ -80,4 +74,67 @@ a:visited {
     margin: 2em;
     width: 90%;
     overflow: hidden;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.student>h1 {
+    font-size: 1.5em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.studentDetails {
+    width: 10em;
+    height: 3em;
+    border: none;
+    right: 10px;
+}
+
+
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.733);
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.modal article {
+    background-color: white;
+    margin: auto;
+    margin-top: 3em;
+    color: black;
+    display: grid;
+    width: 50%;
+    height: 60%;
+    ;
+    padding: 1em;
+}
+
+#cross {
+    padding: 0.1em;
+    font-size: 2em;
+    position: absolute;
+    top: 10px;
+    right: 25%;
+    cursor: pointer;
+}
+
+
+.pic {
+    grid-area: 1/2;
+}
+
+.modal.name,
+.modal.house {
+    grid-area: 2/3;
+}
+
+.hide {
+    display: none;
 }
