@@ -10,11 +10,13 @@
 </head>
 
 <body>
+
   <template>
     <div class="student">
-      <h1 class="studentName"></h1>
-      <p class="studentHouse"></p>
-      <button class="studentDetails">Details</button>
+      <p data-field="firstname"></p>
+      <p data-field="lastname"></p>
+      <p data-field="house"></p>
+      <button data-action="details">Details</button>
     </div>
   </template>
 
@@ -27,21 +29,20 @@
       <div class="sortDropDown">
         <button class="sortBy">Sort by</button>
         <div class="sortOpt">
-          <p id="sortFirst">First name</p>
-          <p id="sortLast">Last name</p>
-          <p id="sortHouse">House</p>
-          <p id="sortNone">None</p>
+          <p data-action="sorting" data-field="firstname">First name</p>
+          <p data-action="sorting" data-field="lastname">Last name</p>
+          <p data-action="sorting" data-field="house">House</p>
         </div>
       </div>
 
       <div class="filterDropDown">
         <button class="filterBy">Filter</button>
         <div class="filterOpt">
-          <p id="filterGryff">Gryffindor</p>
-          <p id="filterSlyth">Slytherin</p>
-          <p id="filterHuff">Hufflepuff</p>
-          <p id="filterRav">Ravenclaw</p>
-          <p id="filterAll">All</p>
+          <p data-action="filter" data-field="Gryffindor">Gryffindor</p>
+          <p data-action="filter" data-field="Slytherin">Slytherin</p>
+          <p data-action="filter" data-field="Hufflepuff">Hufflepuff</p>
+          <p data-action="filter" data-field="Ravenclaw">Ravenclaw</p>
+          <!-- <p data-field="All">All</p> -->
         </div>
       </div>
 
