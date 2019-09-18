@@ -10,6 +10,7 @@ const student = {
   firstname: "-firstname-",
   middlename: "-middlename-",
   lastname: "-lastname-",
+  gender: "-gender-",
   house: "-house-",
   id: "-id-"
 };
@@ -36,6 +37,7 @@ function createObjects(studentsJson) {
     } else {
       studentObj.middlename = "";
     }
+    studentObj.gender = capitalization(oneStudent.gender);
     studentObj.house = capitalization(oneStudent.house);
     studentObj.id = createUUID();
 
@@ -122,9 +124,11 @@ function displayStudent(student) {
   myClone.querySelector("[data-field=firstname]").textContent = student.firstname;
   myClone.querySelector("[data-field=lastname]").textContent = student.lastname;
   myClone.querySelector("[data-field=middlename]").textContent = student.middlename;
+  myClone.querySelector("[data-field=gender]").textContent = student.gender;
   myClone.querySelector("[data-field=house]").textContent = student.house;
+  myClone.querySelector("[data-action=details]").dataset.attribute = student.id;
 
-  //myClone.querySelector("[data-action=details]").addEventListener("click", showDetails);
+  myClone.querySelector("[data-action=details]").addEventListener("click", showDetails);
 
   list.appendChild(myClone);
 }
@@ -158,21 +162,36 @@ function filterBy(house) {
 
 }
 
-// //show details in modal----UNDONE
-// //MODAL
-// const modal = document.querySelector(".modal");
-// const modalCross = document.querySelector(".modal#cross");
+//MODAL
+const modal = document.querySelector(".modal");
+const modalCross = document.querySelector(".modal #cross");
 
-// modal.style.display = "none";
+modal.style.display = "none";
 
-// function showDetails() {
-//   modal.style.display = "block";
+function showDetails(event) {
+  modal.style.display = "block";
 
-//   //closing the modal
-//   modalCross.addEventListener("click", function () {
-//     modal.style.display = "none";
-//   });
-// }
+  const detailsBtn = event.target;
+  const id = detailsBtn.dataset.attribute;
+
+  const studentIndex = currentList.findIndex(findId);
+  modal.querySelector(".name").textContent = currentList[studentIndex].firstname + " " + currentList[studentIndex].middlename + " " + currentList[studentIndex].lastname;
+  modal.querySelector(".gender").textContent = currentList[studentIndex].gender;
+  modal.querySelector(".house").textContent = currentList[studentIndex].house;
+  modal.querySelector(".pic").src = "images/" + currentList[studentIndex].lastname.toLowerCase() + "_" + currentList[studentIndex].firstname.charAt(0).toLowerCase() + ".png";
+
+  function findId(student) {
+    if (student.id === id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  //closing the modal
+  modalCross.addEventListener("click", function () {
+    modal.style.display = "none";
+  });
+}
 
 /*************************************** */
 

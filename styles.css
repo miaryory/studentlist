@@ -111,10 +111,8 @@ a:visited {
     margin: auto;
     margin-top: 3em;
     color: black;
-    display: grid;
     width: 50%;
     height: 60%;
-    ;
     padding: 1em;
 }
 
@@ -125,16 +123,6 @@ a:visited {
     top: 10px;
     right: 25%;
     cursor: pointer;
-}
-
-
-.pic {
-    grid-area: 1/2;
-}
-
-.modal.name,
-.modal.house {
-    grid-area: 2/3;
 }
 
 .hide {
