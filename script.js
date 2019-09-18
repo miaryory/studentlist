@@ -1,12 +1,14 @@
-const baseLink = "http://petlatkea.dk/2019/students1991.json";
+const baseLink = "http://petlatkea.dk/2019/hogwartsdata/students.json";
 const template = document.querySelector("template").content;
 const list = document.querySelector(".list");
 let allStudents = [];
 let currentList = [];
+let filterList = [];
 
 //Object prototype
 const student = {
   firstname: "-firstname-",
+  middlename: "-middlename-",
   lastname: "-lastname-",
   house: "-house-",
   id: "-id-"
@@ -25,20 +27,38 @@ function createObjects(studentsJson) {
   studentsJson.forEach(oneStudent => {
     //Create new student object
     const studentObj = Object.create(student);
-
-    const studentSplit = oneStudent.fullname.split(" ");
+    const studentSplit = capitalization(oneStudent.fullname).split(" ");
 
     studentObj.firstname = studentSplit[0];
-    studentObj.lastname = studentSplit[1];
-    studentObj.house = oneStudent.house;
+    studentObj.lastname = studentSplit[studentSplit.length - 1];
+    if (studentSplit.length > 2) {
+      studentObj.middlename = studentSplit.slice(1, studentSplit.length - 1);
+    } else {
+      studentObj.middlename = "";
+    }
+    studentObj.house = capitalization(oneStudent.house);
     studentObj.id = createUUID();
 
     //objects added in the array
     allStudents.push(studentObj);
   });
 
-  //console.log(allStudents);
   displayList(allStudents);
+}
+
+//fixing name formats
+function capitalization(fullname) {
+  const newNameFormat = [];
+  const nameParts = fullname.trim().split(" ");
+
+  nameParts.forEach(capitalize);
+
+  function capitalize(name) {
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    newNameFormat.push(name);
+  }
+
+  return newNameFormat.join(" ");
 }
 
 const sortOptions = Array.from(document.querySelectorAll(".sortDropDown .sortOpt p"));
@@ -59,8 +79,8 @@ function selectedSorting(option) {
   let sortingOption = option.target;
 
   if (sortingOption.dataset.action === "sorting") {
-    //console.log(option.target.textContent);
     sortingOption.style.backgroundColor = "blue";
+
     sortBy(sortingOption.dataset.field);
     displayList(currentList);
   }
@@ -73,11 +93,9 @@ function selectedFilter(option) {
   let filterOption = option.target;
 
   if (filterOption.dataset.action === "filter") {
-    //console.log(option.target.textContent);
     filterOption.style.backgroundColor = "blue";
-    console.log(filterOption.textContent);
+
     filterBy(filterOption.dataset.field);
-    console.log(currentList);
     displayList(currentList);
   }
 }
@@ -92,7 +110,7 @@ function displayList(studentsArr) {
   deleteChild();
 
   //generate a new array
-  currentList = allStudents;
+  currentList = studentsArr;
 
   currentList.forEach(displayStudent);
 }
@@ -103,6 +121,7 @@ function displayStudent(student) {
 
   myClone.querySelector("[data-field=firstname]").textContent = student.firstname;
   myClone.querySelector("[data-field=lastname]").textContent = student.lastname;
+  myClone.querySelector("[data-field=middlename]").textContent = student.middlename;
   myClone.querySelector("[data-field=house]").textContent = student.house;
 
   //myClone.querySelector("[data-action=details]").addEventListener("click", showDetails);
@@ -112,22 +131,32 @@ function displayStudent(student) {
 
 /*************SORTING********************/
 function sortBy(sortBy) {
+
   currentList.sort((a, b) => {
     return a[sortBy].localeCompare(b[sortBy]);
   });
 
-  console.log(currentList);
+  //console.log(currentList);
 }
 
+/*************FILTERING********************/
 function filterBy(house) {
-  currentList = allStudents.filter(student => {
-    return student.house === house;
-  });
-}
 
-// function display(one) {
-//   console.log(one.firstname);
-// }
+  if (house === "All") {
+
+    currentList = allStudents.filter(student => {
+      return true;
+    });
+
+  } else {
+
+    currentList = allStudents.filter(student => {
+      return student.house === house;
+    });
+
+  }
+
+}
 
 // //show details in modal----UNDONE
 // //MODAL
@@ -145,295 +174,8 @@ function filterBy(house) {
 //   });
 // }
 
-// function displayArr(arrStud) {
-//   //Reseting the previous sorting/filtering
-//   //deleteChild();
-
-//   function displayStud(student) {
-//     const myClone = template.cloneNode(true);
-
-//     myClone.querySelector("h1").textContent = student;
-
-//     list.appendChild(myClone);
-//     //console.log(arrStud[i]);
-//   }
-
-//   //assign each element inside the array and create new list
-//   arrStud.forEach(displayStud);
-// }
-
-// //reset all the .list content (student list displayed)
-// //found on https://www.geeksforgeeks.org/remove-all-the-child-elements-of-a-dom-node-in-javascript/
-// function deleteChild() {
-//   const parent = document.querySelector(".list");
-//   let child = parent.lastElementChild;
-
-//   //while there is child inside this div .list => remove it
-//   while (child) {
-//     parent.removeChild(child);
-//     child = parent.lastElementChild;
-//   }
-// }
-
-// //function sort by None
-// const sortNoneBtn = document.querySelector("#sortNone");
-// sortNoneBtn.addEventListener("click", displayList);
-
-// //function sort by firt name
-// const sortFirstBtn = document.querySelector("#sortFirst");
-// sortFirstBtn.addEventListener("click", sortFirstList);
-
-// function sortFirstList() {
-//   const arrStud = [];
-
-//   fetchJSON(sortFirstName);
-
-//   function sortFirstName(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting all names (first and last) inside an array
-//       arrStud.push(oneStudent.fullname);
-//     });
-
-//     //sort the array
-//     arrStud.sort();
-//     //console.log(arrStud);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     // for (let i = 0; i < arrStud.length; i++) {
-//     //   const myClone = template.cloneNode(true);
-
-//     //   myClone.querySelector("h1").textContent = arrStud[i];
-
-//     //   list.appendChild(myClone);
-//     //   console.log(arrStud[i]);
-//     // }
-//     displayArr(arrStud);
-//   }
-// }
-
-// //function sort by house
-// const sortHouseBtn = document.querySelector("#sortHouse");
-
-// sortHouseBtn.addEventListener("click", sortHouseList);
-
-// function sortHouseList() {
-//   const arrHuffle = [];
-//   const arrGryff = [];
-//   const arrSly = [];
-//   const arrRav = [];
-//   let allHouses = [];
-//   let houseName = [];
-//   const houseGryff = [];
-//   const houseHuffle = [];
-//   const houseSly = [];
-//   const houseRav = [];
-
-//   fetchJSON(sortHouse);
-
-//   function sortHouse(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting each student inside correspondant house
-//       //synchronizing house name array with student name array
-//       if (oneStudent.house == "Gryffindor") {
-//         arrGryff.push(oneStudent.fullname);
-//         houseGryff.push(oneStudent.house);
-//       } else if (oneStudent.house == "Hufflepuff") {
-//         arrHuffle.push(oneStudent.fullname);
-//         houseHuffle.push(oneStudent.house);
-//       } else if (oneStudent.house == "Slytherin") {
-//         arrSly.push(oneStudent.fullname);
-//         houseSly.push(oneStudent.house);
-//       } else {
-//         arrRav.push(oneStudent.fullname);
-//         houseRav.push(oneStudent.house);
-//       }
-//     });
-
-//     //put all arrays into ONE
-//     allHouses = arrGryff.concat(arrHuffle, arrSly, arrRav);
-//     //console.log(allHouses);
-//     houseName = houseGryff.concat(houseHuffle, houseSly, houseRav);
-//     //console.log(houseName);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     for (let i = 0; i < allHouses.length; i++) {
-//       const myClone = template.cloneNode(true);
-
-//       myClone.querySelector("h1").textContent = allHouses[i];
-//       myClone.querySelector("p").textContent = houseName[i];
-
-//       list.appendChild(myClone);
-//     }
-//   }
-// }
-
-// //function sort by last name
-
-// //function filter: All
-// const filterAllBtn = document.querySelector("#filterAll");
-// filterAllBtn.addEventListener("click", sortHouseList);
-
-// //function filter: Gryffindor
-// const filterGryffBtn = document.querySelector("#filterGryff");
-
-// filterGryffBtn.addEventListener("click", gryffOnlyList);
-
-// function gryffOnlyList() {
-//   const gryffOnlyStud = [];
-
-//   fetch(baseLink)
-//     .then(e => e.json())
-//     .then(data => filterGryffOnly(data));
-
-//   function filterGryffOnly(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting each student belonging to Gryffindor in 1 array
-//       if (oneStudent.house == "Gryffindor") {
-//         gryffOnlyStud.push(oneStudent.fullname);
-//       }
-//     });
-
-//     console.log(gryffOnlyStud);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     for (let i = 0; i < gryffOnlyStud.length; i++) {
-//       const myClone = template.cloneNode(true);
-
-//       myClone.querySelector("h1").textContent = gryffOnlyStud[i];
-//       myClone.querySelector("p").textContent = "Gryffindor";
-
-//       list.appendChild(myClone);
-//     }
-//   }
-// }
-
-// //function filter: Hufflepuff
-// const filterHuffBtn = document.querySelector("#filterHuff");
-
-// filterHuffBtn.addEventListener("click", huffOnlyList);
-
-// function huffOnlyList() {
-//   const huffOnlyStud = [];
-
-//   fetch(baseLink)
-//     .then(e => e.json())
-//     .then(data => filterHuffOnly(data));
-
-//   function filterHuffOnly(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting each student belonging to Gryffindor in 1 array
-//       if (oneStudent.house == "Hufflepuff") {
-//         huffOnlyStud.push(oneStudent.fullname);
-//       }
-//     });
-
-//     console.log(huffOnlyStud);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     for (let i = 0; i < huffOnlyStud.length; i++) {
-//       const myClone = template.cloneNode(true);
-
-//       myClone.querySelector("h1").textContent = huffOnlyStud[i];
-//       myClone.querySelector("p").textContent = "Hufflepuff";
-
-//       list.appendChild(myClone);
-//     }
-//   }
-// }
-
-// //function filter: Slytherin
-// const filterSlyBtn = document.querySelector("#filterSlyth");
-
-// filterSlyBtn.addEventListener("click", slyOnlyList);
-
-// function slyOnlyList() {
-//   const slyOnlyStud = [];
-
-//   fetch(baseLink)
-//     .then(e => e.json())
-//     .then(data => filterSlyOnly(data));
-
-//   function filterSlyOnly(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting each student belonging to Gryffindor in 1 array
-//       if (oneStudent.house == "Slytherin") {
-//         slyOnlyStud.push(oneStudent.fullname);
-//       }
-//     });
-
-//     console.log(slyOnlyStud);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     for (let i = 0; i < slyOnlyStud.length; i++) {
-//       const myClone = template.cloneNode(true);
-
-//       myClone.querySelector("h1").textContent = slyOnlyStud[i];
-//       myClone.querySelector("p").textContent = "Slytherin";
-
-//       list.appendChild(myClone);
-//     }
-//   }
-// }
-
-// //function filter: Ravenlaw
-// const filterRavBtn = document.querySelector("#filterRav");
-
-// filterRavBtn.addEventListener("click", ravOnlyList);
-
-// function ravOnlyList() {
-//   const ravOnlyStud = [];
-
-//   fetch(baseLink)
-//     .then(e => e.json())
-//     .then(data => filterRavOnly(data));
-
-//   function filterRavOnly(allStudent) {
-//     allStudent.forEach(oneStudent => {
-//       //putting each student belonging to Gryffindor in 1 array
-//       if (oneStudent.house == "Ravenclaw") {
-//         ravOnlyStud.push(oneStudent.fullname);
-//       }
-//     });
-
-//     console.log(ravOnlyStud);
-
-//     //move content from the array to the html studentName
-//     //first: reset the previous list w/ this function
-//     deleteChild();
-
-//     //assign each element inside the array and create new list
-//     for (let i = 0; i < ravOnlyStud.length; i++) {
-//       const myClone = template.cloneNode(true);
-
-//       myClone.querySelector("h1").textContent = ravOnlyStud[i];
-//       myClone.querySelector("p").textContent = "Ravenclaw";
-
-//       list.appendChild(myClone);
-//     }
-//   }
-// }
-
 /*************************************** */
+
 //generate uuid: unique id
 //https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 function createUUID() {
