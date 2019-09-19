@@ -180,11 +180,11 @@ function filterBy(house) {
   }
 }
 
-//MODAL
-const modal = document.querySelector(".modal");
-const modalCross = document.querySelector(".modal #cross");
-
+/*************MODAL********************/
 function showDetails(event) {
+  const modal = document.querySelector(".modal");
+  const modalCross = document.querySelector(".modal #cross");
+
   window.addEventListener('scroll', noScroll);
 
   document.querySelector(".modal").classList.add("showModal");
@@ -200,7 +200,15 @@ function showDetails(event) {
   modal.querySelector(".name").textContent = currentList[studentIndex].firstname + " " + currentList[studentIndex].middlename + " " + currentList[studentIndex].lastname;
   modal.querySelector(".gender").textContent = currentList[studentIndex].gender;
   modal.querySelector(".house").textContent = currentList[studentIndex].house;
-  modal.querySelector(".pic").src = "images/" + currentList[studentIndex].lastname.toLowerCase() + "_" + currentList[studentIndex].firstname.charAt(0).toLowerCase() + ".png";
+
+  const studentPic = "images/" + currentList[studentIndex].lastname.toLowerCase() + "_" + currentList[studentIndex].firstname.charAt(0).toLowerCase() + ".png";
+  if (studentPic != undefined) {
+    modal.querySelector(".pic").src = studentPic;
+  } else {
+    modal.querySelector(".pic").style.display = "none";
+  }
+
+  houseCrest(currentList[studentIndex].house);
 
   function findId(student) {
     if (student.id === id) {
@@ -209,6 +217,7 @@ function showDetails(event) {
       return false;
     }
   }
+
   //closing the modal
   modalCross.addEventListener("click", function () {
     window.removeEventListener('scroll', noScroll);
@@ -219,6 +228,12 @@ function showDetails(event) {
     document.querySelector(".tableHeader").classList.remove("moveList");
     list.classList.remove("moveList");
   });
+}
+
+//theme changer of the modal
+function houseCrest(housename) {
+  document.querySelector(".modal").querySelector("article").dataset.theme = housename.toLowerCase();
+  document.querySelector(".modal").querySelector(".crest").src = "crest/" + housename.toLowerCase() + ".jpg";
 }
 
 //disable window scrolling when modal is open

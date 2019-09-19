@@ -1,3 +1,33 @@
+:root {
+  --font-color: black;
+  --modal-color: white;
+  --border-color: black;
+}
+
+[data-theme="gryffindor"] {
+  --font-color: red;
+  --modal-color: white;
+  --border-color: yellow;
+}
+
+[data-theme="slytherin"] {
+  --font-color: green;
+  --modal-color: white;
+  --border-color: black;
+}
+
+[data-theme="ravenclaw"] {
+  --font-color: blue;
+  --modal-color: white;
+  --border-color: brown;
+}
+
+[data-theme="hufflepuff"] {
+  --font-color: orange;
+  --modal-color: white;
+  --border-color: yellow;
+}
+
 body {
   color: white;
   background-image: url(back.jpg);
@@ -16,6 +46,7 @@ body {
   position: fixed;
   overflow: hidden;
   transition: 0.5s;
+  padding-top: 8em;
 }
 
 .show {
@@ -84,7 +115,6 @@ body {
 .modal {
   width: 0;
   background-color: rgba(0, 0, 0, 0.733);
-  color: black;
   position: fixed;
   left: 0;
   top: 0;
@@ -94,10 +124,17 @@ body {
 }
 
 .modal article {
-  background-color: white;
+  background-color: var(--modal-color);
+  color: var(--font-color);
   width: 60%;
   height: 100%;
+  padding: 1em;
+}
+
+.modal article .border {
   position: relative;
+  border: 1px solid var(--border-color);
+  height: 100%;
   padding: 1em;
 }
 
@@ -113,126 +150,40 @@ body {
   cursor: pointer;
 }
 
-@media all and (min-width: 600px) {
+.crest {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+}
+
+@media all and (min-width: 750px) {
+  main {
+    display: flex;
+  }
+
   .burgerMenu {
     display: none;
   }
 
   .allOpt {
-    display: block;
+    z-index: inherit;
+    width: 250px;
+  }
+
+  .main {
+    margin-left: 250px;
+  }
+
+  .modal article {
+    width: 50%;
+  }
+
+  #cross {
+    max-width: 40px;
+  }
+
+  .crest {
+    max-width: 100px;
   }
 }
-
-/* html {
-    height: 100%;
-}
-
-body {
-    color: white;
-    background-image: url(back.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-}
-
-main {
-    display: grid;
-    grid-template-areas: "options title"
-        "options list";
-}
-
-main>h1 {
-    grid-area: title;
-    text-align: center;
-    font-size: 2.5em;
-}
-
-.allOpt {
-    grid-area: options;
-}
-
-.list {
-    grid-area: list;
-    background-color: rgba(0, 0, 0, 0.568);
-}
-
-.sortOpt p,
-.filterOpt p {
-    display: block;
-    cursor: pointer;
-}
-
-.sortOpt,
-.filterOpt {
-    display: none;
-}
-
-.show {
-    display: block;
-}
-
-.sortBy,
-.filterBy {
-    width: 10em;
-    height: 2em;
-}
-
-.student {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 1em;
-    text-align: center;
-    margin: 2em;
-    width: 90%;
-    overflow: hidden;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.student>h1 {
-    font-size: 1.5em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.studentDetails {
-    width: 10em;
-    height: 3em;
-    border: none;
-    right: 10px;
-}
-
-
-
-.modal {
-    display: none;
-    background-color: rgba(0, 0, 0, 0.733);
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-}
-
-.modal article {
-    background-color: white;
-    margin: auto;
-    margin-top: 3em;
-    color: black;
-    width: 50%;
-    height: 60%;
-    padding: 1em;
-}
-
-#cross {
-    padding: 0.1em;
-    font-size: 2em;
-    position: absolute;
-    top: 10px;
-    right: 25%;
-    cursor: pointer;
-}
-
-.hide {
-    display: none;
-} */
