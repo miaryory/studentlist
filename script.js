@@ -3,7 +3,28 @@ const template = document.querySelector("template").content;
 const list = document.querySelector(".list");
 let allStudents = [];
 let currentList = [];
-let filterList = [];
+
+const menuOnMobile = document.querySelector(".burgerMenu");
+
+menuOnMobile.addEventListener("click", function () {
+  document.querySelector(".allOpt").classList.toggle("show");
+  document.querySelector(".main").classList.toggle("moveMain");
+  document.querySelector("#menuMobile").classList.toggle("moveMain");
+  document.querySelector(".tableHeader").classList.toggle("moveList");
+  list.classList.toggle("moveList");
+});
+
+window.addEventListener("scroll", fixMenu);
+
+function fixMenu() {
+  const bodyHeight = Math.floor(window.scrollY);
+
+  if (bodyHeight > 84) {
+    document.querySelector("#menuMobile").style.top = "10px";
+  } else {
+    document.querySelector("#menuMobile").style.top = "inherit";
+  }
+}
 
 //Object prototype
 const student = {
@@ -18,7 +39,8 @@ const student = {
 //fetching elements
 function fetchJSON() {
   fetch(baseLink)
-    .then(e => e.json()).then(data => {
+    .then(e => e.json())
+    .then(data => {
       createObjects(data);
     });
 }
@@ -118,13 +140,12 @@ function displayList(studentsArr) {
 }
 
 function displayStudent(student) {
-
   const myClone = template.cloneNode(true);
 
-  myClone.querySelector("[data-field=firstname]").textContent = student.firstname;
-  myClone.querySelector("[data-field=lastname]").textContent = student.lastname;
-  myClone.querySelector("[data-field=middlename]").textContent = student.middlename;
-  myClone.querySelector("[data-field=gender]").textContent = student.gender;
+  myClone.querySelector("[data-field=fullname]").textContent = student.firstname + " " + student.lastname;
+  //myClone.querySelector("[data-field=lastname]").textContent = student.lastname;
+  //myClone.querySelector("[data-field=middlename]").textContent = student.middlename;
+  //myClone.querySelector("[data-field=gender]").textContent = student.gender;
   myClone.querySelector("[data-field=house]").textContent = student.house;
   myClone.querySelector("[data-action=details]").dataset.attribute = student.id;
 
@@ -135,7 +156,6 @@ function displayStudent(student) {
 
 /*************SORTING********************/
 function sortBy(sortBy) {
-
   currentList.sort((a, b) => {
     return a[sortBy].localeCompare(b[sortBy]);
   });
@@ -145,31 +165,33 @@ function sortBy(sortBy) {
 
 /*************FILTERING********************/
 function filterBy(house) {
-
   if (house === "All") {
-
     currentList = allStudents.filter(student => {
       return true;
     });
-
   } else {
+    const sotingByHouseDisaled = document.querySelector(".sortDropDown .sortOpt");
 
+    sotingByHouseDisaled.querySelector("[data-field=house]").removeEventListener("click", selectedSorting);
+    sotingByHouseDisaled.querySelector("[data-field=house]").style.color = "red";
     currentList = allStudents.filter(student => {
       return student.house === house;
     });
-
   }
-
 }
 
 //MODAL
 const modal = document.querySelector(".modal");
 const modalCross = document.querySelector(".modal #cross");
 
-modal.style.display = "none";
-
 function showDetails(event) {
-  modal.style.display = "block";
+  window.addEventListener('scroll', noScroll);
+
+  document.querySelector(".modal").classList.add("showModal");
+  document.querySelector(".main").classList.add("moveMain");
+  document.querySelector("#menuMobile").classList.add("moveMain");
+  document.querySelector(".tableHeader").classList.add("moveList");
+  list.classList.add("moveList");
 
   const detailsBtn = event.target;
   const id = detailsBtn.dataset.attribute;
@@ -189,8 +211,20 @@ function showDetails(event) {
   }
   //closing the modal
   modalCross.addEventListener("click", function () {
-    modal.style.display = "none";
+    window.removeEventListener('scroll', noScroll);
+
+    document.querySelector(".modal").classList.remove("showModal");
+    document.querySelector(".main").classList.remove("moveMain");
+    document.querySelector("#menuMobile").classList.remove("moveMain");
+    document.querySelector(".tableHeader").classList.remove("moveList");
+    list.classList.remove("moveList");
   });
+}
+
+//disable window scrolling when modal is open
+//https://davidwells.io/snippets/disable-scrolling-with-javascript
+function noScroll() {
+  window.scrollTo(0, 0);
 }
 
 /*************************************** */
@@ -198,9 +232,7 @@ function showDetails(event) {
 //generate uuid: unique id
 //https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 function createUUID() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16));
 }
 
 //reset all the .list content (student list displayed)
