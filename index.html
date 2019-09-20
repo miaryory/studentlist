@@ -14,9 +14,6 @@
   <template>
     <div class="student">
       <p data-field="fullname"></p>
-      <!-- <p data-field="middlename"></p>
-      <p data-field="lastname"></p> -->
-      <!-- <p data-field="gender"></p> -->
       <p data-field="house"></p>
       <button data-action="details">Details</button>
     </div>
@@ -41,7 +38,8 @@
           <p data-action="filter" data-field="Slytherin">Slytherin</p>
           <p data-action="filter" data-field="Hufflepuff">Hufflepuff</p>
           <p data-action="filter" data-field="Ravenclaw">Ravenclaw</p>
-          <p data-action="filter" data-field="All">All</p>
+          <p data-action="filter" data-field="Expelled">Expelled Students</p>
+          <p data-action="filter" data-field="Non-expelled">Non-Expelled Students</p>
         </div>
       </div>
 
@@ -75,6 +73,7 @@
           <p class="name">Student full name</p>
           <p class="gender">Gender</p>
           <p class="house">Student house</p>
+          <button data-action="expel">Expel</button>
         </div>
       </article>
     </div>

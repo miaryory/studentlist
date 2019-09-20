@@ -56,7 +56,7 @@ body {
 .main {
   width: 85%;
   margin-left: auto;
-  transition: 0.4s;
+  transition: 0.5s;
 }
 
 .moveMain {
@@ -72,11 +72,14 @@ body {
 
 .tableHeader p {
   flex-basis: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .list,
 .tableHeader {
-  transition: 0.3s;
+  transition: 0.5s;
 }
 
 .moveList {
@@ -104,6 +107,9 @@ body {
   flex-basis: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .student button {
@@ -156,6 +162,7 @@ body {
   margin-right: auto;
   width: 25%;
 }
+
 
 @media all and (min-width: 750px) {
   main {
