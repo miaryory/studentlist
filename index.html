@@ -16,6 +16,7 @@
       <p data-field="fullname"></p>
       <p data-field="house"></p>
       <button data-action="details">Details</button>
+      <input type="checkbox" data-action="prefect">
     </div>
   </template>
 
@@ -23,7 +24,7 @@
     <div class="allOpt">
 
       <div class="sortDropDown">
-        <h1 class="sortBy">Sort by</h1>
+        <h1 class="sortBy">sort by:</h1>
         <div class="sortOpt">
           <p data-action="sorting" data-field="firstname">First name</p>
           <p data-action="sorting" data-field="lastname">Last name</p>
@@ -32,7 +33,7 @@
       </div>
 
       <div class="filterDropDown">
-        <h1 class="filterBy">Filter</h1>
+        <h1 class="filterBy">filter:</h1>
         <div class="filterOpt">
           <p data-action="filter" data-field="Gryffindor">Gryffindor</p>
           <p data-action="filter" data-field="Slytherin">Slytherin</p>
@@ -47,7 +48,8 @@
 
     <div class="main">
 
-      <h1>Hogwarts</h1>
+      <!-- <h1>Hogwarts</h1> -->
+      <img src="hogwarts.png" id="hogwarts" alt="Hogwarts">
 
       <div class="burgerMenu">
         <img id="menuMobile" src="menuwhite.png" alt="Menu">
@@ -57,6 +59,7 @@
         <p>Name</p>
         <p>House</p>
         <p>About</p>
+        <p>Prefect status</p>
       </div>
 
       <div class="list">
@@ -72,6 +75,7 @@
           <img src="" alt="House crest" class="crest">
           <p class="name">Student full name</p>
           <p class="gender">Gender</p>
+          <p class="blood">Blood status</p>
           <p class="house">Student house</p>
           <button data-action="expel">Expel</button>
         </div>

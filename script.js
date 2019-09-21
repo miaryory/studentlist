@@ -1,17 +1,20 @@
 "use strict";
 
 const baseLink = "http://petlatkea.dk/2019/hogwartsdata/students.json";
+const nameslink = "http://petlatkea.dk/2019/hogwartsdata/families.json";
 const template = document.querySelector("template").content;
 const list = document.querySelector(".list");
 let allStudents = [];
 let currentList = [];
 let expelledList = [];
 let nonExpelledList = [];
+let pure = [];
+let half = [];
 
 //menu format for small screen view
 const menuOnMobile = document.querySelector(".burgerMenu");
 
-menuOnMobile.addEventListener("click", function() {
+menuOnMobile.addEventListener("click", function () {
   document.querySelector(".allOpt").classList.toggle("show");
   document.querySelector(".main").classList.toggle("moveMain");
   document.querySelector("#menuMobile").classList.toggle("moveMain");
@@ -39,16 +42,30 @@ const student = {
   gender: "-gender-",
   house: "-house-",
   id: "-id-",
-  expelled: false
+  expelled: false,
+  prefect: false,
+  blood: "-blood-status"
 };
 
 //fetching elements
 function fetchJSON() {
   fetch(baseLink)
-    .then(e => e.json())
-    .then(data => {
+    .then(e => e.json()).then(data => {
       createObjects(data);
     });
+}
+
+//fetch family names
+function fetchNamesJSON() {
+  fetch(nameslink)
+    .then(e => e.json()).then(data => {
+      storeNames(data);
+    });
+}
+
+function storeNames(familyNames) {
+  pure = familyNames.pure;
+  half = familyNames.half;
 }
 
 //create clean data
@@ -69,6 +86,8 @@ function createObjects(studentsJson) {
     studentObj.house = capitalization(oneStudent.house);
     studentObj.id = createUUID();
     studentObj.expelled = false;
+    studentObj.prefect = false;
+    studentObj.blood = bloodStatus(studentObj.lastname);
 
     //objects added in the array
     allStudents.push(studentObj);
@@ -101,6 +120,12 @@ function loadPage() {
   document.querySelector(".sortDropDown .sortOpt").addEventListener("click", selectedSorting);
   document.querySelector(".filterDropDown .filterOpt").addEventListener("click", selectedFilter);
   fetchJSON();
+  fetchNamesJSON();
+}
+
+/**********BLOOD STATUS*************/
+function bloodStatus(studentName) {
+  console.log(pure);
 }
 
 /************SORTING OPTIONS***************/
@@ -110,7 +135,7 @@ function selectedSorting(option) {
   let sortingOption = option.target;
 
   if (sortingOption.dataset.action === "sorting") {
-    sortingOption.style.backgroundColor = "blue";
+    sortingOption.classList.add("selected");
 
     sortBy(sortingOption.dataset.field);
     displayList(currentList);
@@ -124,7 +149,7 @@ function selectedFilter(option) {
   let filterOption = option.target;
 
   if (filterOption.dataset.action === "filter") {
-    filterOption.style.backgroundColor = "blue";
+    filterOption.classList.add("selected");
 
     filterBy(filterOption.dataset.field);
     displayList(currentList);
@@ -133,7 +158,7 @@ function selectedFilter(option) {
 
 //remove highlighted sorting option when it's not selected
 function notSelected(option) {
-  option.style.backgroundColor = "transparent";
+  option.classList.remove("selected");
 }
 
 function displayList(studentsArr) {
@@ -142,6 +167,7 @@ function displayList(studentsArr) {
 
   //generate a new array
   currentList = studentsArr;
+  nonExpelledList = currentList;
 
   currentList.forEach(displayStudent);
 }
@@ -152,8 +178,10 @@ function displayStudent(student) {
   myClone.querySelector("[data-field=fullname]").textContent = student.firstname + " " + student.lastname;
   myClone.querySelector("[data-field=house]").textContent = student.house;
   myClone.querySelector("[data-action=details]").dataset.attribute = student.id;
+  myClone.querySelector("[data-action=prefect]").dataset.attribute = student.id;
 
   myClone.querySelector("[data-action=details]").addEventListener("click", showDetails);
+  myClone.querySelector("[data-action=prefect]").addEventListener("click", managePrefect);
 
   list.appendChild(myClone);
 }
@@ -226,7 +254,7 @@ function showDetails(event) {
   }
 
   //closing the modal
-  modalCross.addEventListener("click", function() {
+  modalCross.addEventListener("click", function () {
     window.removeEventListener("scroll", noScroll);
 
     document.querySelector(".modal").classList.remove("showModal");
@@ -240,7 +268,7 @@ function showDetails(event) {
 //theme changer of the modal
 function houseCrest(housename) {
   document.querySelector(".modal").querySelector("article").dataset.theme = housename.toLowerCase();
-  document.querySelector(".modal").querySelector(".crest").src = "crest/" + housename.toLowerCase() + ".jpg";
+  document.querySelector(".modal").querySelector(".crest").src = "crest/" + housename.toLowerCase() + ".png";
 }
 
 /******************EXPELLING************************/
@@ -290,6 +318,67 @@ function expelStudent(event) {
 
   element.parentElement.remove();
   console.log(currentList);
+
+
+  //cannot be prefect anymore
+  // const checkox = list.querySelector('.student input[data-action=prefect]');
+  // checkox.display = "none";
+}
+
+/************PREFECT***************************/
+function managePrefect(event) {
+
+  const checkbox = event.target;
+  const id = checkbox.dataset.attribute;
+
+  const indexStudent = nonExpelledList.findIndex(studentID);
+
+  function studentID(student) {
+    if (student.id === id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //store all checkbox in array
+  let allCheckox = Array.from(list.querySelectorAll("input[data-action=prefect]"));
+
+  let count = 0;
+  allCheckox.forEach(makePrefect);
+
+  function makePrefect(checkbox) {
+    if (checkbox.checked) {
+      nonExpelledList[indexStudent].prefect = true;
+      console.log(nonExpelledList[indexStudent]);
+    }
+  }
+
+  count = filterPrefects(nonExpelledList[indexStudent].house);
+
+  console.log("Count:" + count);
+
+  if (count > 2) {
+    checkbox.checked = false;
+    //count--;
+    alert("More than 2 prefects selected in house " + nonExpelledList[indexStudent].house);
+    nonExpelledList[indexStudent].prefect = false;
+  }
+
+}
+
+//Number of prefect in a house
+function filterPrefects(house) {
+  let counter = 0;
+
+  nonExpelledList.filter(student => {
+    if (student.house === house && student.prefect === true) {
+      counter++;
+    }
+  });
+
+  console.log("Counter: " + counter);
+  return counter;
 }
 
 //disable window scrolling when modal is open
