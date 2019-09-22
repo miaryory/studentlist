@@ -51,12 +51,12 @@ body {
   position: fixed;
   overflow: hidden;
   transition: 0.5s;
-  padding-top: 7em;
+  padding-top: 8em;
 }
 
 .sortDropDown .sortBy,
 .filterDropDown .filterBy {
-  font-size: 1.6em;
+  font-size: 1.4em;
   margin-top: 1em;
 }
 
@@ -139,7 +139,9 @@ body {
   height: 20px;
 }
 
-.student button {
+.student button,
+.modal button[data-action="expel"] {
+  width: 50%;
   height: 40px;
   border: none;
   border-radius: 20px;
@@ -147,7 +149,7 @@ body {
 
 .modal {
   width: 0;
-  background-color: rgba(0, 0, 0, 0.733);
+  background-color: rgba(0, 0, 0, 0.555);
   position: fixed;
   left: 0;
   top: 0;
@@ -173,6 +175,15 @@ body {
   border: 1px solid var(--border-color);
   height: 100%;
   padding: 1em;
+}
+
+.modal .gender {
+  max-width: 40px;
+}
+
+.modal button[data-action="expel"] {
+  background-color: rgba(156, 20, 20, 0.74);
+  color: white;
 }
 
 .showModal {
@@ -214,7 +225,15 @@ body {
   }
 
   .modal article {
-    width: 50%;
+    max-width: 500px;
+  }
+
+  .modal article .border .pic {
+    margin-bottom: 1em;
+  }
+
+  .modal article .border .crest {
+    grid-area: 1/2;
   }
 
   #cross {

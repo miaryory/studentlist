@@ -14,7 +14,7 @@ let half = [];
 //menu format for small screen view
 const menuOnMobile = document.querySelector(".burgerMenu");
 
-menuOnMobile.addEventListener("click", function () {
+menuOnMobile.addEventListener("click", function() {
   document.querySelector(".allOpt").classList.toggle("show");
   document.querySelector(".main").classList.toggle("moveMain");
   document.querySelector("#menuMobile").classList.toggle("moveMain");
@@ -44,28 +44,42 @@ const student = {
   id: "-id-",
   expelled: false,
   prefect: false,
-  blood: "-blood-status"
+  blood: "-blood-status-",
+  inquisitorial: false
+};
+
+const miary = {
+  firstname: "Miary",
+  middlename: "Mahandry",
+  lastname: "Ory",
+  gender: "Girl",
+  house: "Ravenclaw",
+  id: createUUID(),
+  expelled: false,
+  prefect: false,
+  blood: "Pure blood",
+  inquisitorial: false
 };
 
 //fetching elements
 function fetchJSON() {
   fetch(baseLink)
-    .then(e => e.json()).then(data => {
+    .then(e => e.json())
+    .then(data => {
       createObjects(data);
     });
 }
 
-//fetch family names
-function fetchNamesJSON() {
-  fetch(nameslink)
-    .then(e => e.json()).then(data => {
-      storeNames(data);
-    });
-}
+const sortOptions = Array.from(document.querySelectorAll(".sortDropDown .sortOpt p"));
+const filterOptions = Array.from(document.querySelectorAll(".filterDropDown .filterOpt p"));
 
-function storeNames(familyNames) {
-  pure = familyNames.pure;
-  half = familyNames.half;
+window.addEventListener("load", loadPage);
+
+function loadPage() {
+  document.querySelector(".sortDropDown .sortOpt").addEventListener("click", selectedSorting);
+  document.querySelector(".filterDropDown .filterOpt").addEventListener("click", selectedFilter);
+  fetchJSON();
+  //fetchNamesJSON();
 }
 
 //create clean data
@@ -87,7 +101,42 @@ function createObjects(studentsJson) {
     studentObj.id = createUUID();
     studentObj.expelled = false;
     studentObj.prefect = false;
-    studentObj.blood = bloodStatus(studentObj.lastname);
+    studentObj.inquisitorial = false;
+    fetchNamesJSON(); //setting blood status
+    //console.log(studentObj);
+
+    //fetch family names
+    function fetchNamesJSON() {
+      fetch(nameslink)
+        .then(e => e.json())
+        .then(data => {
+          storeNames(data);
+        });
+    }
+
+    function storeNames(familyNames) {
+      familyNames.pure.forEach(name => {
+        pure.push(name);
+      });
+      familyNames.half.forEach(name => {
+        half.push(name);
+      });
+
+      bloodStatus();
+    }
+
+    /**********BLOOD STATUS*************/
+    function bloodStatus() {
+      if (pure.includes(studentObj.lastname) && !half.includes(studentObj.lastname)) {
+        studentObj.blood = "Pure blood";
+      } else if (!pure.includes(studentObj.lastname) && half.includes(studentObj.lastname)) {
+        studentObj.blood = "Muggle";
+      } else if (pure.includes(studentObj.lastname) && half.includes(studentObj.lastname)) {
+        studentObj.blood = "Pure blood";
+      } else {
+        studentObj.blood = "";
+      }
+    }
 
     //objects added in the array
     allStudents.push(studentObj);
@@ -109,23 +158,6 @@ function capitalization(fullname) {
   }
 
   return newNameFormat.join(" ");
-}
-
-const sortOptions = Array.from(document.querySelectorAll(".sortDropDown .sortOpt p"));
-const filterOptions = Array.from(document.querySelectorAll(".filterDropDown .filterOpt p"));
-
-window.addEventListener("load", loadPage);
-
-function loadPage() {
-  document.querySelector(".sortDropDown .sortOpt").addEventListener("click", selectedSorting);
-  document.querySelector(".filterDropDown .filterOpt").addEventListener("click", selectedFilter);
-  fetchJSON();
-  fetchNamesJSON();
-}
-
-/**********BLOOD STATUS*************/
-function bloodStatus(studentName) {
-  console.log(pure);
 }
 
 /************SORTING OPTIONS***************/
@@ -179,9 +211,11 @@ function displayStudent(student) {
   myClone.querySelector("[data-field=house]").textContent = student.house;
   myClone.querySelector("[data-action=details]").dataset.attribute = student.id;
   myClone.querySelector("[data-action=prefect]").dataset.attribute = student.id;
+  myClone.querySelector("[data-action=inquisitorial]").dataset.attribute = student.id;
 
   myClone.querySelector("[data-action=details]").addEventListener("click", showDetails);
   myClone.querySelector("[data-action=prefect]").addEventListener("click", managePrefect);
+  myClone.querySelector("[data-action=inquisitorial]").addEventListener("click", manageSquad);
 
   list.appendChild(myClone);
 }
@@ -230,7 +264,21 @@ function showDetails(event) {
 
   const studentIndex = currentList.findIndex(findId);
   modal.querySelector(".name").textContent = currentList[studentIndex].firstname + " " + currentList[studentIndex].middlename + " " + currentList[studentIndex].lastname;
-  modal.querySelector(".gender").textContent = currentList[studentIndex].gender;
+  if (currentList[studentIndex].gender === "Girl") {
+    modal.querySelector(".gender").src = "female.png";
+  } else if (currentList[studentIndex].gender === "Boy") {
+    modal.querySelector(".gender").src = "male.png";
+  }
+
+  const bloodStatus = ["Pure blood", "Half blood", "Muggle"];
+
+  //hack part of blood status
+  if (currentList[studentIndex].blood == "Pure blood") {
+    modal.querySelector(".blood").textContent = bloodStatus[Math.floor(Math.random() * bloodStatus.length)];
+  } else {
+    modal.querySelector(".blood").textContent = "Pure blood";
+  }
+
   modal.querySelector(".house").textContent = currentList[studentIndex].house;
   modal.querySelector("[data-action=expel]").dataset.attribute = currentList[studentIndex].id;
 
@@ -254,7 +302,7 @@ function showDetails(event) {
   }
 
   //closing the modal
-  modalCross.addEventListener("click", function () {
+  modalCross.addEventListener("click", function() {
     window.removeEventListener("scroll", noScroll);
 
     document.querySelector(".modal").classList.remove("showModal");
@@ -289,11 +337,6 @@ function expelStudent(event) {
   currentList[indexStudent].expelled = true;
 
   //remove expell btn ******MAKE SOME ANIMATION HERE***********
-  // if (document.querySelector(".modal").querySelector("[data-action=expel]").dataset.attribute === currentList[indexStudent].id) {
-  //   document.querySelector(".modal").querySelector("[data-action=expel]").style.display = "none";
-  // } else {
-  //   document.querySelector(".modal").querySelector("[data-action=expel]").style.display = "block";
-  // }
 
   //add student to expelled list
   expelledList.push(currentList[indexStudent]);
@@ -319,7 +362,6 @@ function expelStudent(event) {
   element.parentElement.remove();
   console.log(currentList);
 
-
   //cannot be prefect anymore
   // const checkox = list.querySelector('.student input[data-action=prefect]');
   // checkox.display = "none";
@@ -327,7 +369,6 @@ function expelStudent(event) {
 
 /************PREFECT***************************/
 function managePrefect(event) {
-
   const checkbox = event.target;
   const id = checkbox.dataset.attribute;
 
@@ -364,7 +405,6 @@ function managePrefect(event) {
     alert("More than 2 prefects selected in house " + nonExpelledList[indexStudent].house);
     nonExpelledList[indexStudent].prefect = false;
   }
-
 }
 
 //Number of prefect in a house
@@ -379,6 +419,30 @@ function filterPrefects(house) {
 
   console.log("Counter: " + counter);
   return counter;
+}
+
+/**************INQUISITORIAL SQUAD*********************/
+function manageSquad(event) {
+  const checkbox = event.target;
+  const id = checkbox.dataset.attribute;
+
+  const indexStudent = nonExpelledList.findIndex(studentID);
+
+  function studentID(student) {
+    if (student.id === id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  if (nonExpelledList[indexStudent].blood == "Pure blood" || nonExpelledList[indexStudent].house == "Slytherin") {
+    nonExpelledList[indexStudent].inquisitorial = true;
+  } else {
+    nonExpelledList[indexStudent].inquisitorial = false;
+    checkbox.checked = false;
+    alert("This student cannot be in the inquisitorial squad. Choose a pure blood or one from Slytherin");
+  }
 }
 
 //disable window scrolling when modal is open
