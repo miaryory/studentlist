@@ -48,6 +48,7 @@ const student = {
   inquisitorial: false
 };
 
+//hacking part
 const miary = {
   firstname: "Miary",
   middlename: "Mahandry",
@@ -79,7 +80,6 @@ function loadPage() {
   document.querySelector(".sortDropDown .sortOpt").addEventListener("click", selectedSorting);
   document.querySelector(".filterDropDown .filterOpt").addEventListener("click", selectedFilter);
   fetchJSON();
-  //fetchNamesJSON();
 }
 
 //create clean data
@@ -102,8 +102,8 @@ function createObjects(studentsJson) {
     studentObj.expelled = false;
     studentObj.prefect = false;
     studentObj.inquisitorial = false;
+
     fetchNamesJSON(); //setting blood status
-    //console.log(studentObj);
 
     //fetch family names
     function fetchNamesJSON() {
@@ -141,7 +141,7 @@ function createObjects(studentsJson) {
     //objects added in the array
     allStudents.push(studentObj);
   });
-
+  allStudents.push(miary);
   displayList(allStudents);
 }
 
@@ -199,9 +199,12 @@ function displayList(studentsArr) {
 
   //generate a new array
   currentList = studentsArr;
-  nonExpelledList = currentList;
+  nonExpelledList = allStudents.filter(student => {
+    return student.expelled === false;
+  });
 
   currentList.forEach(displayStudent);
+  countStudents(allStudents, nonExpelledList);
 }
 
 function displayStudent(student) {
@@ -218,6 +221,34 @@ function displayStudent(student) {
   myClone.querySelector("[data-action=inquisitorial]").addEventListener("click", manageSquad);
 
   list.appendChild(myClone);
+}
+
+/*************NUMBER OF STUDENTS********************/
+function countStudents(countAllStudents, countNonExpelledList) {
+  let g = 0;
+  let s = 0;
+  let h = 0;
+  let r = 0;
+  const allHouses = Array.from(countAllStudents);
+
+  for (let i = 0; i < allHouses.length; i++) {
+    if (allHouses[i].house === "Gryffindor") {
+      g++;
+    } else if (allHouses[i].house === "Slytherin") {
+      s++;
+    } else if (allHouses[i].house === "Hufflepuff") {
+      h++;
+    } else if (allHouses[i].house === "Ravenclaw") {
+      r++;
+    }
+  }
+
+  filterOptions[0].textContent = "Gryffindor (" + g + ")";
+  filterOptions[1].textContent = "Slytherin (" + s + ")";
+  filterOptions[2].textContent = "Hufflepuff (" + h + ")";
+  filterOptions[3].textContent = "Ravenclaw (" + r + ")";
+  filterOptions[4].textContent = "Non-Expelled Students (" + countNonExpelledList.length + ")";
+  filterOptions[5].textContent = "Expelled Students (" + expelledList.length + ")";
 }
 
 /*************SORTING********************/
@@ -280,15 +311,27 @@ function showDetails(event) {
   }
 
   modal.querySelector(".house").textContent = currentList[studentIndex].house;
-  modal.querySelector("[data-action=expel]").dataset.attribute = currentList[studentIndex].id;
 
-  modal.querySelector("[data-action=expel]").addEventListener("click", expelStudent);
-
-  const studentPic = "images/" + currentList[studentIndex].lastname.toLowerCase() + "_" + currentList[studentIndex].firstname.charAt(0).toLowerCase() + ".png";
-  if (studentPic != undefined) {
-    modal.querySelector(".pic").src = studentPic;
+  if (currentList[studentIndex].expelled === true) {
+    //remove button if already expelled
+    modal.querySelector("[data-action=expel]").style.display = "none";
   } else {
-    modal.querySelector(".pic").style.display = "none";
+    modal.querySelector("[data-action=expel]").style.display = "block";
+    modal.querySelector("[data-action=expel]").dataset.attribute = currentList[studentIndex].id;
+
+    modal.querySelector("[data-action=expel]").addEventListener("click", expelStudent);
+  }
+
+  //my picture
+  if (currentList[studentIndex].firstname === "Miary") {
+    modal.querySelector(".pic").src = "images/me.png";
+  } else {
+    const studentPic = "images/" + currentList[studentIndex].lastname.toLowerCase() + "_" + currentList[studentIndex].firstname.charAt(0).toLowerCase() + ".png";
+    if (studentPic != undefined) {
+      modal.querySelector(".pic").src = studentPic;
+    } else {
+      modal.querySelector(".pic").style.display = "none";
+    }
   }
 
   houseCrest(currentList[studentIndex].house);
@@ -321,32 +364,44 @@ function houseCrest(housename) {
 
 /******************EXPELLING************************/
 function expelStudent(event) {
-  //AND CLOSE THE MODAL **********SOME ANIMATION HERE TOO*********
-  window.removeEventListener("scroll", noScroll);
-  document.querySelector(".modal").classList.remove("showModal");
-  document.querySelector(".main").classList.remove("moveMain");
-  document.querySelector("#menuMobile").classList.remove("moveMain");
-  document.querySelector(".tableHeader").classList.remove("moveList");
-  list.classList.remove("moveList");
-
   const id = event.target.dataset.attribute;
 
   const indexStudent = currentList.findIndex(studentID);
 
-  //mark student as expelled
-  currentList[indexStudent].expelled = true;
+  //I'm un-expelable
+  if (currentList[indexStudent].firstname === "Miary") {
+    currentList[indexStudent].expelled = false;
+    document.querySelector(".un-expellable").style.display = "block";
+    setTimeout(function() {
+      document.querySelector(".un-expellable").style.display = "none";
+    }, 4000);
+  } else {
+    //AND CLOSE THE MODAL **********SOME ANIMATION HERE TOO*********
+    window.removeEventListener("scroll", noScroll);
+    document.querySelector(".modal").classList.remove("showModal");
+    document.querySelector(".main").classList.remove("moveMain");
+    document.querySelector("#menuMobile").classList.remove("moveMain");
+    document.querySelector(".tableHeader").classList.remove("moveList");
+    list.classList.remove("moveList");
 
-  //remove expell btn ******MAKE SOME ANIMATION HERE***********
+    //mark student as expelled
+    currentList[indexStudent].expelled = true;
 
-  //add student to expelled list
-  expelledList.push(currentList[indexStudent]);
+    //add student to expelled list
+    expelledList.push(currentList[indexStudent]);
 
-  //delete it from both lists
-  currentList.splice(indexStudent, 1);
+    //delete it from both lists
+    currentList.splice(indexStudent, 1);
 
-  const indexStudent2 = allStudents.findIndex(studentID);
-  allStudents.splice(indexStudent2, 1);
-  nonExpelledList = allStudents;
+    const indexStudent2 = allStudents.findIndex(studentID);
+    allStudents.splice(indexStudent2, 1);
+    nonExpelledList = allStudents;
+    //remove it from display
+    const element = list.querySelector('.student button[data-attribute="' + id + '"]');
+
+    element.parentElement.remove();
+    console.log(currentList);
+  }
 
   function studentID(student) {
     if (student.id === id) {
@@ -356,15 +411,12 @@ function expelStudent(event) {
     }
   }
 
-  //remove it from display
-  const element = list.querySelector('.student button[data-attribute="' + id + '"]');
-
-  element.parentElement.remove();
-  console.log(currentList);
-
   //cannot be prefect anymore
   // const checkox = list.querySelector('.student input[data-action=prefect]');
   // checkox.display = "none";
+
+  //update student count
+  countStudents(currentList, nonExpelledList);
 }
 
 /************PREFECT***************************/
@@ -443,6 +495,12 @@ function manageSquad(event) {
     checkbox.checked = false;
     alert("This student cannot be in the inquisitorial squad. Choose a pure blood or one from Slytherin");
   }
+
+  //hacking: remove inquisitorial status after 1.5sec
+  setTimeout(function() {
+    checkbox.checked = false;
+    nonExpelledList[indexStudent].inquisitorial = false;
+  }, 1500);
 }
 
 //disable window scrolling when modal is open
