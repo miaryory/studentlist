@@ -213,6 +213,13 @@ function displayStudent(student) {
   myClone.querySelector("[data-field=fullname]").textContent = student.firstname + " " + student.lastname;
   myClone.querySelector("[data-field=house]").textContent = student.house;
   myClone.querySelector("[data-action=details]").dataset.attribute = student.id;
+
+  //expelled student cannot be prefect or in inquisitorial squad anymore
+  if (student.expelled === true) {
+    myClone.querySelector("[data-action=prefect]").style.display = "none";
+    myClone.querySelector("[data-action=inquisitorial]").style.display = "none";
+  }
+
   myClone.querySelector("[data-action=prefect]").dataset.attribute = student.id;
   myClone.querySelector("[data-action=inquisitorial]").dataset.attribute = student.id;
 
@@ -263,15 +270,16 @@ function sortBy(sortBy) {
 /*************FILTERING********************/
 function filterBy(filter) {
   if (filter === "Expelled") {
+    document.querySelector(".tableHeader p.prefect-status").style.display = "none";
+    document.querySelector(".tableHeader p.inqui-squad").style.display = "none";
     displayList(expelledList);
   } else if (filter === "Non-expelled") {
+    document.querySelector(".tableHeader p.prefect-status").style.display = "block";
+    document.querySelector(".tableHeader p.inqui-squad").style.display = "block";
     displayList(nonExpelledList);
   } else {
-    // const sotingByHouseDisaled = document.querySelector(".sortDropDown .sortOpt");
-
-    // sotingByHouseDisaled.querySelector("[data-field=house]").removeEventListener("click", selectedSorting);
-    // sotingByHouseDisaled.querySelector("[data-field=house]").style.color = "red";
-
+    document.querySelector(".tableHeader p.prefect-status").style.display = "block";
+    document.querySelector(".tableHeader p.inqui-squad").style.display = "block";
     currentList = allStudents.filter(student => {
       return student.house === filter;
     });
@@ -410,10 +418,6 @@ function expelStudent(event) {
       return false;
     }
   }
-
-  //cannot be prefect anymore
-  // const checkox = list.querySelector('.student input[data-action=prefect]');
-  // checkox.display = "none";
 
   //update student count
   countStudents(currentList, nonExpelledList);
