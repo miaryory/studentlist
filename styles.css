@@ -5,27 +5,27 @@
 }
 
 [data-theme="gryffindor"] {
-  --font-color: red;
+  --font-color: white;
   --modal-color: white;
-  --border-color: yellow;
+  --border-color: rgba(199, 66, 4, 0.479);
 }
 
 [data-theme="slytherin"] {
-  --font-color: green;
+  --font-color: white;
   --modal-color: white;
-  --border-color: black;
+  --border-color: rgba(0, 61, 23, 0.61);
 }
 
 [data-theme="ravenclaw"] {
-  --font-color: blue;
+  --font-color: white;
   --modal-color: white;
-  --border-color: brown;
+  --border-color: rgba(0, 34, 78, 0.459);
 }
 
 [data-theme="hufflepuff"] {
-  --font-color: orange;
+  --font-color: white;
   --modal-color: white;
-  --border-color: yellow;
+  --border-color: rgba(199, 131, 4, 0.479);
 }
 
 body {
@@ -200,7 +200,7 @@ body {
 
 .modal article .border {
   position: relative;
-  border: 1px solid var(--border-color);
+  background-color: var(--border-color);
   height: 100%;
   padding: 1em;
 }
